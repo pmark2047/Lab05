@@ -47,9 +47,9 @@ public:
    // set the thrusters
    void set(const Interface * pUI)
    {
-      mainEngine       = true;
-      clockwise        = true;
-      counterClockwise = true;
+      mainEngine       = false;
+      clockwise        = false;
+      counterClockwise = false;
    }
 
 private:

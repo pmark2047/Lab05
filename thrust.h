@@ -66,8 +66,8 @@ public:
    void set(const Interface * pUI)
    {
       mainEngine       = pUI -> isDown();
-      clockwise        = pUI -> isRight();
-      counterClockwise = pUI -> isLeft();
+      clockwise        = pUI -> isLeft();
+      counterClockwise = pUI -> isRight();
    }
 
 private:

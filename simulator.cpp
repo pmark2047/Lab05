@@ -4,9 +4,7 @@
  **********************************************************************/
 
 #include "position.h"    // everything should have a point
-#include "acceleration.h"// for ACCELERATION
-#include "lander.h"      // for LANDER
-#include "star.h"        // for STAR
+#include "angle.h"       // angle of the lander
 #include "uiInteract.h"  // for INTERFACE
 #include "uiDraw.h"      // for RANDOM and DRAW*
 #include "ground.h"      // for GROUND
@@ -23,11 +21,34 @@ using namespace std;
 class Simulator
 {
 public:
+   // set up the simulator
    Simulator(const Position & posUpperRight) : ground(posUpperRight) {}
+       
+   // display stuff on the screen
+   void display(Position posLander, Position posStar, Angle a, int phase);
+  
+   unsigned char phase;
+   Angle a;
    Ground ground;
 };
 
+/**********************************************************
+ * DISPLAY
+ * Draw on the screen
+ **********************************************************/
+void Simulator::display(Position posLander, Position posStar, Angle a, int phase)
+{
+   ogstream gout;
 
+   // draw the ground
+ground.draw(gout);
+
+   // draw the lander
+gout.drawLander(posLander, a.getRadians());
+
+   // draw a star
+gout.drawStar(posStar, phase);
+}
 
 /*************************************
  * CALLBACK
@@ -38,11 +59,23 @@ void callBack(const Interface* pUI, void* p)
    // the first step is to cast the void pointer into a game object. This
    // is the first step of every single callback function in OpenGL. 
    Simulator * pSimulator = (Simulator *)p;
+   Position posLander(200.0, 200.0);
+   Position posStar(250, 300);
+   static Angle a;
+   static int phase = 128;
 
-   ogstream gout;
+   // draw the game
+   pSimulator->display(posLander, posStar, a, phase);
 
-   // draw the ground
-   pSimulator->ground.draw(gout);
+   // handle input
+   if (pUI->isRight())
+      a.add(-0.1);
+      ;   // rotate right here
+   if (pUI->isLeft())
+      a.add(0.1);
+      ;   // rotate left here
+
+   phase +=1;
 }
 
 /*********************************

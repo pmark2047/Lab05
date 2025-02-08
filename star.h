@@ -18,5 +18,6 @@
 class Star
 {
 public:
-
+   position = (random(0,400), random(0, 400));
+   phase = 0;
 };

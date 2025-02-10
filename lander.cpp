@@ -9,14 +9,19 @@
 
 #include "lander.h"
 #include "acceleration.h"
-
  /***************************************************************
   * RESET
   * Reset the lander and its position to start the game over
   ***************************************************************/
 void Lander :: reset(const Position & posUpperRight)
 {
-   status = DEAD;
+   angle = 0;
+   status = PLAYING;
+   fuel = 5000.0;
+   velocity.setDX(random(-10, -4));
+   velocity.setDY(random(-2, 2));
+   pos.setX(posUpperRight.getX() - 1);
+   pos.setY(random(75.0, 95.0));
 }
 
 /***************************************************************
@@ -33,8 +38,38 @@ void Lander :: draw(const Thrust & thrust, ogstream & gout) const
  ***************************************************************/
 Acceleration Lander :: input(const Thrust& thrust, double gravity)
 {
-   pos.setX(-99.9);
-   return Acceleration();
+   Acceleration acceleration;
+   acceleration.setDDY(gravity);
+   
+   if (fuel > 0)
+   {
+      if (thrust.isMain())
+      {
+         double thrustMagnitude = thrust.mainEngineThrust();
+         double angleRadians = angle.getRadians();
+         
+         double thrustX = -sin(angleRadians) * thrustMagnitude;
+         double thrustY = cos(angleRadians) * thrustMagnitude;
+         
+         acceleration.addDDX(thrustX);
+         acceleration.addDDY(thrustY);
+         
+         fuel -= 10;
+      }
+      
+      if (thrust.isClock())
+      {
+         angle.add(0.1);
+         fuel -= 1;
+      }
+      if (thrust.isCounter())
+      {
+         angle.add(-0.1); 
+         fuel -= 1;
+      }
+   }
+   
+   return acceleration;
 }
 
 /******************************************************************
@@ -43,5 +78,15 @@ Acceleration Lander :: input(const Thrust& thrust, double gravity)
  *******************************************************************/
 void Lander :: coast(Acceleration & acceleration, double time)
 {
-   pos.setX(-99.9);
+   double newDX = velocity.getDX() + acceleration.getDDX() * time;
+   double newDY = velocity.getDY() + acceleration.getDDY() * time;
+   
+   double newX = pos.getX() + velocity.getDX() * time + 0.5 * acceleration.getDDX() * time * time;
+   double newY = pos.getY() + velocity.getDY() * time + 0.5 * acceleration.getDDY() * time * time;
+   
+   velocity.setDX(newDX);
+   velocity.setDY(newDY);
+   
+   pos.setX(newX);
+   pos.setY(newY);
 }

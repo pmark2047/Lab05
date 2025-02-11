@@ -29,7 +29,7 @@ class Lander
    
 public:
   // to create a lander, we need to know something about the board
-  Lander(const Position & posUpperRight) : status(DEAD), fuel(-99.0) {  }
+   Lander(const Position & posUpperRight) : status(PLAYING) { reset(posUpperRight); }
 
   // reset the lander and its position
   void reset(const Position& posUpperRight);

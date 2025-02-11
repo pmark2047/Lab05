@@ -4,13 +4,16 @@
  **********************************************************************/
 
 #include "position.h"    // everything should have a point
-#include "angle.h"       // angle of the lander
+#include "acceleration.h"// for ACCELERATION
+#include "lander.h"      // for LANDER
+#include "star.h"        // for STAR
 #include "uiInteract.h"  // for INTERFACE
 #include "uiDraw.h"      // for RANDOM and DRAW*
 #include "ground.h"      // for GROUND
 #include "test.h"        // for the unit tests
 #include <cmath>         // for SQRT
 #include <cassert>       // for ASSERT
+#define GRAVITY -1.625
 using namespace std;
 
 
@@ -21,34 +24,15 @@ using namespace std;
 class Simulator
 {
 public:
-   // set up the simulator
-   Simulator(const Position & posUpperRight) : ground(posUpperRight) {}
-       
-   // display stuff on the screen
-   void display(Position posLander, Position posStar, Angle a, int phase);
-  
-   unsigned char phase;
-   Angle a;
+   Simulator(const Position & posUpperRight) : ground(posUpperRight), lander(posUpperRight) {}
    Ground ground;
+   Lander lander;
+   Thrust thrust;
+   Acceleration acceleration;
+   Star star;
 };
 
-/**********************************************************
- * DISPLAY
- * Draw on the screen
- **********************************************************/
-void Simulator::display(Position posLander, Position posStar, Angle a, int phase)
-{
-   ogstream gout;
 
-   // draw the ground
-ground.draw(gout);
-
-   // draw the lander
-gout.drawLander(posLander, a.getRadians());
-
-   // draw a star
-gout.drawStar(posStar, phase);
-}
 
 /*************************************
  * CALLBACK
@@ -59,23 +43,27 @@ void callBack(const Interface* pUI, void* p)
    // the first step is to cast the void pointer into a game object. This
    // is the first step of every single callback function in OpenGL. 
    Simulator * pSimulator = (Simulator *)p;
-   Position posLander(200.0, 200.0);
-   Position posStar(250, 300);
-   static Angle a;
-   static int phase = 128;
+   Position posUpperRight(400, 400);
 
-   // draw the game
-   pSimulator->display(posLander, posStar, a, phase);
+   ogstream gout;
 
-   // handle input
-   if (pUI->isRight())
-      a.add(-0.1);
-      ;   // rotate right here
-   if (pUI->isLeft())
-      a.add(0.1);
-      ;   // rotate left here
-
-   phase +=1;
+   // draw the ground
+   pSimulator->ground.draw(gout);
+   
+   // draw the lander
+   pSimulator->lander.draw(pSimulator->thrust, gout);
+   
+   // connect thrusters to lander
+   pSimulator->thrust.set(pUI);
+   
+   pSimulator->acceleration = pSimulator->lander.input(pSimulator->thrust, GRAVITY);
+   
+   pSimulator->lander.coast(pSimulator->acceleration, 0.1);
+   
+   pSimulator->lander.input(pSimulator->thrust, GRAVITY);
+   
+   
+   
 }
 
 /*********************************

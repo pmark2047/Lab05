@@ -17,9 +17,9 @@
  *****************************************************/
 class Star
 {
-public:
+   public:
    double starX = random(0.0, 400.0);
    double starY = random(0.0, 400.0);
    Position position = Position(starX, starY);
-   int phase = 0;
+   int phase = random(0, 256);
 };

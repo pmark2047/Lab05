@@ -29,7 +29,8 @@ public:
    Lander lander;
    Thrust thrust;
    Acceleration acceleration;
-   Star star;
+   int phaseShifter = 0;
+   Star stars[50];
 };
 
 
@@ -46,7 +47,14 @@ void callBack(const Interface* pUI, void* p)
    Position posUpperRight(400, 400);
 
    ogstream gout;
-
+   
+   // draw a star
+   for (Star& star : pSimulator->stars)
+   {
+      star.phase += 1;
+      gout.drawStar(star.position, star.phase);
+   }
+   
    // draw the ground
    pSimulator->ground.draw(gout);
    

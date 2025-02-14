@@ -54,7 +54,7 @@ public:
   void coast(Acceleration & acceleration, double time);
 
   // straighten the lander and put it on the ground
-   void land()  { this -> angle = 0; status = SAFE;}
+   void land()  { this -> angle = 0; status = SAFE; }
 
   // we are dead. Draw the lander upside down
    void crash() {  this -> angle = 180; status = DEAD;}

@@ -70,7 +70,22 @@ void callBack(const Interface* pUI, void* p)
    
    pSimulator->lander.input(pSimulator->thrust, GRAVITY);
    
+   // Add collisions
    
+   if (pSimulator->ground.onPlatform(pSimulator->lander.getPosition(), pSimulator->lander.getWidth())){
+      pSimulator->lander.land();
+   }
+   if (pSimulator->ground.hitGround(pSimulator->lander.getPosition(), pSimulator->lander.getWidth())){
+      pSimulator->lander.crash();
+   }
+   
+   // Reset Function
+   
+   if (pUI -> isQ())
+   {
+      pSimulator->lander.reset(posUpperRight);
+      pSimulator->ground.reset();
+   }
    
 }
 

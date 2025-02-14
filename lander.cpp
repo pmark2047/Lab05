@@ -21,7 +21,7 @@ void Lander :: reset(const Position & posUpperRight)
    velocity.setDX(random(-10, -4));
    velocity.setDY(random(-2, 2));
    pos.setX(posUpperRight.getX() - 1);
-   pos.setY(random(75.0, 95.0));
+   pos.setY(random(375.0, 395.0));
 }
 
 /***************************************************************
@@ -81,6 +81,8 @@ Acceleration Lander :: input(const Thrust& thrust, double gravity)
  *******************************************************************/
 void Lander :: coast(Acceleration & acceleration, double time)
 {
+   if (!isFlying())
+   {return;}
    double newDX = velocity.getDX() + acceleration.getDDX() * time;
    double newDY = velocity.getDY() + acceleration.getDDY() * time;
    

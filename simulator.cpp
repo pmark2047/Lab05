@@ -87,6 +87,24 @@ void callBack(const Interface* pUI, void* p)
       pSimulator->ground.reset();
    }
    
+   // Readout values
+   double speed = pSimulator->lander.getSpeed();
+   double altitude = pSimulator->lander.getPosition().getY();
+   int fuel = pSimulator->lander.getFuel();
+   
+   gout.drawReadout(speed, altitude, fuel);
+   
+   //crash message
+   if (pSimulator->lander.isDead())
+   {
+      gout.drawCrashMessage();
+   }
+   
+   //landed message
+   if (pSimulator->lander.isLanded())
+   {
+      gout.drawLandedMessage();
+   }
 }
 
 /*********************************

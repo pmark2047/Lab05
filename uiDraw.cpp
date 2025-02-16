@@ -41,6 +41,9 @@
 #include "position.h"
 #include "uiDraw.h"
 
+#include <iomanip>
+#include <sstream>
+
 using namespace std;
 
 #define deg2rad(value) ((M_PI / 180) * (value))
@@ -441,7 +444,47 @@ double random(double min, double max)
    return num;
 }
 
+/******************************************************************
+ * drawReadout
+ * This function draw the readout of the data for the speed, height, and fuel levels
+ ****************************************************************/
+
+void ogstream::drawReadout(double speed, double altitude, int fuel) const
+{
+   // Format speed to 2 decimal places
+   ostringstream speedStream;
+   speedStream << fixed << setprecision(2) << speed;
+   string speedStr = speedStream.str();
+
+   Position textPos(10, 380);
+   drawText(textPos, ("Speed: " + speedStr + " m/s").c_str());
+
+   // Explicitly set fixed notation for altitude
+   ostringstream altitudeStream;
+   altitudeStream << std::fixed << std::setprecision(2) << altitude;
+   string altitudeStr = altitudeStream.str();
 
 
+   textPos.addY(-20);
+   drawText(textPos, ("Altitude: " + altitudeStr + " meters").c_str());
 
+   // Format fuel display
+   ostringstream fuelStream;
+   fuelStream << fixed << setprecision(0) << fuel;  // Display fuel as an integer
+   string fuelStr = fuelStream.str();
 
+   textPos.addY(-20);
+   drawText(textPos, ("Fuel: " + fuelStr + " lbs / 5000 lbs").c_str());
+}
+
+void ogstream::drawLandedMessage() const
+{
+   Position textPos(170, 265);
+   drawText(textPos, "Landed Safely");
+}
+
+void ogstream::drawCrashMessage() const
+{
+   Position textPos(170, 265);
+   drawText(textPos, "Crash Landed");
+}

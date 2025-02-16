@@ -67,6 +67,11 @@ public:
                                  double red   = 1.0,
                                  double green = 1.0,
                                  double blue  = 1.0) const;
+   
+   virtual void drawReadout(double speed, double altitude, int fuel) const;
+   virtual void drawLandedMessage() const;
+   virtual void drawCrashMessage() const;
+   
 protected:
    Position pos;
    
